@@ -1,7 +1,7 @@
-import asyncio  # had to use this as the text was updating too quickly for the player to see and looked broken
+import asyncio
 import cards
 import random
-from textual.app import App, ComposeResult
+from textual.app import App
 from textual.widgets import Static, Input, Button, Footer, Header
 
 class GoFishApp(App):
@@ -28,11 +28,11 @@ class GoFishApp(App):
         self.computer, pairs = cards.identify_remove_pairs(self.computer)
         self.computer_pairs.extend(pairs)
 
-    def compose(self) -> ComposeResult: #creates 
+    def compose(self): 
         yield Header()
         yield Static("Welcome to Go Fish!", id="main_text")
         yield Static("Player's Hand:", id="player_hand")
-        yield Input(id="input_box")
+        yield Input(placeholder = "Enter a number to select a card", id="input_box")
         yield Button("Play Turn", id="play_turn_button")
         yield Footer()
 
@@ -41,7 +41,7 @@ class GoFishApp(App):
         self.query_one("#player_hand").update(player_hand_text)
 
     async def on_mount(self):
-        await self.update_display("Welcome to Go Fish!")
+        self.update_display("Welcome to Go Fish!")
         self.show_player_hand()
 
     async def update_display(self, text):
@@ -53,7 +53,7 @@ class GoFishApp(App):
             choice_text = self.query_one("#input_box").value.strip()
             if self.asking_for_card:
                 
-                if choice_text in ["y", "n", "Y", "N"]:
+                if choice_text in ["y", "n", "Y", "N", "yes", "no", "Yes", "No", "YES", "NO"]:
                     await self.handle_player_response(choice_text)
                 else:
                     await self.update_display("Please enter 'y' or 'n'.")
@@ -64,16 +64,17 @@ class GoFishApp(App):
                     await self.play_game(int(choice_text))
                 else:
                     await self.update_display("Please enter a valid card number.")
-                    self.query_one("#input_box").value = "" # clears the text box 
+                    self.query_one("#input_box").value = ""  
 
     async def handle_player_response(self, response):
-        if response == "y":
+        if response in ["y", "Y", "yes","Yes","YES",]:
             for n, card in enumerate(self.player):
                 if card.startswith(self.card_value):
                     self.computer.append(self.player.pop(n))
                     await self.update_display(f"The computer took your {self.card_value}.")
+                    await asyncio.sleep(1.0) #slows so you can see the updates
                     break
-        else:  
+        elif response == "n":  
             self.computer.append(self.deck.pop())
             await self.update_display("The computer drew a card from the deck.")
             await asyncio.sleep(1.0) #slows so you can see the updates
@@ -128,6 +129,8 @@ class GoFishApp(App):
     async def update_game_state(self):
         self.computer, pairs = cards.identify_remove_pairs(self.computer)
         self.computer_pairs.extend(pairs)
+        await asyncio.sleep(1.0)
+        await self.update_display("Player turn: select a card from the list")
 
         if len(self.computer) == 0:
             await self.update_display("The Game is over. The computer won.")

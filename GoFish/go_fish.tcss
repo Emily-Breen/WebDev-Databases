@@ -2,29 +2,20 @@
 Static { 
     text-align: center;
     border: dashed red;
-    
+    align: center middle;
+   
 }
-
-Header {
-    text-align: center;
-    color: white;
-    padding: 1;
-}
-
-Footer {
-    background: #2e3a59;
-    text-align: center;
-    color: white;
-    padding: 1;
-}
-
 Button {
+    
     background: #2563eb;
     border: coral;
     text-align: center;
     color: white;
     padding: 1;
     margin: 1;
+    
+    
+ 
 }
 
 Button:hover {
@@ -36,4 +27,8 @@ Button:hover {
 
     border: blue;
     background: #2e3a59;
+    text-align: center;
+    width: 40
+    
+    
 }

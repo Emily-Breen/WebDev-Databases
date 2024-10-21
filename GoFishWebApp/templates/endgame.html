@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block the_body %}
+
+    <h2>Game Over!</h2>
+    
+    <img src="{{ url_for('static', filename='gameover.png') }}" alt="Game over image" style="width: 300px; height: 200px; margin-bottom: 20px; background-color: aqua;">
+    
+    <a href="/" class = "btn btn-primary" >Go back to the Main menu</a>
+
+{% endblock %}

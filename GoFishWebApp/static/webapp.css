@@ -27,12 +27,12 @@ img {
     border: 2px solid white;  
     border-radius: 8px;
     box-shadow: 20px 20px 30px rgba(0, 0, 0, 1);
-    margin: 5px;
+    margin: 10px;
 }
 
 /* Hover effect on card images */
 img:hover {
-    transform: scale(1.1);
+    transform: scale(1.2);
 }
 
 /* Styling for buttons */
@@ -76,6 +76,7 @@ img:hover {
 }
 /* styling for flash messages that appear on screen*/
 .flash-messages li {
+    font-size: 20px;
     padding: 10px;
     font-weight: bold;               
     color: black;               

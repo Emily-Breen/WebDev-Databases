@@ -25,10 +25,10 @@ def reset_state():
 # Check if a player or computer has won
 def check_winner():
     if len(session["player"]) == 0:
-        flash("The Game is over. The player won!")
+        flash("The Game is over. The player won! Great Job!")
         return True
     elif len(session["computer"]) == 0:
-        flash("The Game is over. The computer won!")
+        flash("The Game is over. The computer won! Better look next time!")
         return True
     return False
 
@@ -48,7 +48,7 @@ def start():
     card_images = [card.lower().replace(" ", "_") + ".png" for card in session["player"]]
     return render_template(
         "startgame.html",
-        title="Welcome to GoFish for the Web!",
+        title="Let the games begin!",
         cards=card_images,
         n_computer=len(session["computer"]),
     )

@@ -5,7 +5,11 @@
     <h2>Game Over!</h2>
     
     <img src="{{ url_for('static', filename='gameover.png') }}" alt="Game over image" style="width: 300px; height: 200px; margin-bottom: 20px; background-color: aqua;">
+    <div>
+        <!-- Link to go back to main menu -->
+        <a href="/" class = "btn btn-primary" >Go back to the Main menu</a>
+
+    </div>
     
-    <a href="/" class = "btn btn-primary" >Go back to the Main menu</a>
 
 {% endblock %}

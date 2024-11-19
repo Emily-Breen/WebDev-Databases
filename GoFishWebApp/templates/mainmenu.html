@@ -2,13 +2,21 @@
 
 {% block the_body %}
 
-</head>
-    <h1>Main Menu</h1>
-    <img src="{{ url_for('static', filename='mainmenu.png') }}" alt="Main menu logo" style="width: 500px; height: 400px; background-color: aqua;">
-    <div>
-        <!-- Link to start a new game -->
-        <a href="/startgame" class="btn">Start a new game</a>
+<h1>Main Menu</h1>
+<img src="{{ url_for('static', filename='mainmenu.png') }}" alt="Main menu logo" style="width: 500px; height: 400px; background-color: aqua;">
 
-    </div>
+<!-- Registration form -->
+<div>
+    <form action ="{{ url_for('main_menu') }}" method="post">
+        <label for="username">Enter your username:</label>
+        <input type="text" id="username" name="username" required>
+        <button type="submit">Register / Log In</button>
+    </form>
+</div>
+
+<div>
+    <!-- Link to start a new game -->
+    <a href="/startgame" class="btn">Start a new game</a>
+</div>
 
 {% endblock %}

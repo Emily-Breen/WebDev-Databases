@@ -1,14 +1,27 @@
-from flask import Flask, render_template, session, flash
+from flask import Flask, render_template, session, flash, request, redirect, url_for
 import cards
 import random
+import cards
+import random
+from DBcm import UseDatabase
 
 app = Flask(__name__)
 app.secret_key = "fdhghdfjghndfhgdlfgnh'odfahngldafhgjdafngjdfaghldkafngladkfngdfljka"
 
+
+creds = {
+    "host": "localhost",
+    "port": 3306,
+    "user": "gofishuser",
+    "password": "gofishpasswd",
+    "database": "gofishDB",
+    
+}
+app.config["creds"] = creds
 # Reset the game state
 def reset_state():
     session["deck"] = cards.build_deck()
-
+ 
     session["computer"] = []  
     session["player"] = []
     session["player_pairs"] = []
@@ -32,17 +45,45 @@ def check_winner():
         return True
     return False
 
+# Store the game result in the leaderboard
+def store_game_result(winner):
+    score = len(session["player_pairs"]) if winner == "Player" else len(session["computer_pairs"])
+    with UseDatabase(creds) as cursor:
+        cursor.execute("""
+            INSERT INTO leaderboard (player_id, score, result)
+            VALUES (%s, %s, %s)
+        """, (session["player_id"], score, winner))
+# Register route to get player handle
+
+
 # Route to the mainMenu
-@app.get("/")
-@app.get("/mainmenu")
+# Route for main menu with registration form
+@app.route("/", methods=["GET", "POST"])
+@app.route("/mainmenu", methods=["GET", "POST"])
 def main_menu():
-    return render_template(
-        "mainmenu.html",
-        title="Welcome to Go Fish!"
-    )
+    if request.method == "POST":
+        username = request.form.get("username")
+        if username:
+            with UseDatabase(creds) as cursor:
+                _SQL = "SELECT id FROM Players WHERE handle=%s"
+                cursor.execute(_SQL, (username,))
+                result = cursor.fetchone()
+                if not result:
+                    # New user, insert into Players
+                    _SQL = "INSERT INTO Players (handle) VALUES (%s)"
+                    cursor.execute(_SQL, (username,))
+                    cursor.execute("SELECT LAST_INSERT_ID()")
+                    result = cursor.fetchone()
+                session["player_id"] = result[0]
+                flash(f"Welcome, {username}!")
+                return redirect(url_for("start"))
+        else:
+            flash("Please enter a username.")
+    
+    return render_template("mainmenu.html", title="Welcome to Go Fish!")
 # Route to start the game
 
-@app.get("/startgame")
+@app.route("/startgame", methods=["GET"])
 def start():
     reset_state()
     card_images = [card.lower().replace(" ", "_") + ".png" for card in session["player"]]
@@ -54,7 +95,8 @@ def start():
     )
 
 # Process card selection
-@app.get("/select/<value>")
+@app.route("/select/<value>", methods=["GET"])
+
 def process_card_selection(value):
     found_it = False
     for n, card in enumerate(session["computer"]):
